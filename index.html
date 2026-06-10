@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyFlow — Student Productivity Dashboard</title>
+  <meta name="description" content="A premium student productivity dashboard with task management, Pomodoro timer, daily goals, and study analytics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="logo">📚</span>
+      <h1>Study<span class="accent">Flow</span></h1>
+    </div>
+    <div class="header-right">
+      <span class="greeting" id="greeting"></span>
+      <button class="btn-icon" id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN DASHBOARD ===== -->
+  <main class="dashboard">
+
+    <!-- ── TO-DO LIST ── -->
+    <section class="card card-todo" id="todoCard">
+      <div class="card-header">
+        <h2>📝 To-Do List</h2>
+        <div class="task-counters">
+          <span class="badge badge-pending" id="pendingCount">0 pending</span>
+          <span class="badge badge-done" id="doneCount">0 done</span>
+        </div>
+      </div>
+      <div class="todo-input-group">
+        <input type="text" id="taskInput" placeholder="Add a new task..." autocomplete="off" />
+        <button class="btn btn-primary" id="addTaskBtn">Add</button>
+      </div>
+      <ul class="task-list" id="taskList"></ul>
+      <p class="empty-state" id="emptyTasks">🎉 No tasks yet — add one above!</p>
+    </section>
+
+    <!-- ── POMODORO TIMER ── -->
+    <section class="card card-timer" id="timerCard">
+      <div class="card-header">
+        <h2>⏱️ Pomodoro Timer</h2>
+        <span class="badge badge-session" id="sessionBadge">Study</span>
+      </div>
+      <div class="timer-display">
+        <div class="timer-ring" id="timerRing">
+          <svg viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="90" />
+            <circle class="ring-progress" cx="100" cy="100" r="90" id="timerProgress" />
+          </svg>
+          <div class="timer-text">
+            <span class="timer-digits" id="timerDigits">25:00</span>
+            <span class="timer-label" id="timerLabel">Focus Time</span>
+          </div>
+        </div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn btn-success" id="timerStart">▶ Start</button>
+        <button class="btn btn-warning" id="timerPause" disabled>⏸ Pause</button>
+        <button class="btn btn-danger" id="timerReset">↺ Reset</button>
+      </div>
+      <div class="session-info">
+        <span>Sessions today: <strong id="sessionCount">0</strong></span>
+      </div>
+    </section>
+
+    <!-- ── DAILY GOALS ── -->
+    <section class="card card-goals" id="goalsCard">
+      <div class="card-header">
+        <h2>🎯 Daily Goals</h2>
+      </div>
+      <div class="goal-setting">
+        <label for="goalInput">Daily study goal (hours):</label>
+        <div class="goal-input-group">
+          <input type="number" id="goalInput" min="0.5" max="24" step="0.5" value="5" />
+          <button class="btn btn-primary" id="setGoalBtn">Set</button>
+        </div>
+      </div>
+      <div class="progress-section">
+        <div class="progress-header">
+          <span>Progress</span>
+          <span class="progress-pct" id="goalPct">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="goalProgressBar"></div>
+        </div>
+        <p class="progress-detail" id="goalDetail">0 / 5 hours completed</p>
+      </div>
+      <div class="log-time-section">
+        <label for="logTimeInput">Log study time (hours):</label>
+        <div class="goal-input-group">
+          <input type="number" id="logTimeInput" min="0.25" max="12" step="0.25" value="0.5" />
+          <button class="btn btn-success" id="logTimeBtn">+ Log</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STUDY CHART ── -->
+    <section class="card card-chart" id="chartCard">
+      <div class="card-header">
+        <h2>📊 Study Analytics</h2>
+      </div>
+      <div class="chart-container">
+        <canvas id="studyChart"></canvas>
+      </div>
+    </section>
+
+    <!-- ── STREAK TRACKER ── -->
+    <section class="card card-streak" id="streakCard">
+      <div class="card-header">
+        <h2>🔥 Study Streak</h2>
+      </div>
+      <div class="streak-display">
+        <span class="streak-flame">🔥</span>
+        <span class="streak-number" id="streakCount">0</span>
+        <span class="streak-label">day streak</span>
+      </div>
+      <p class="streak-msg" id="streakMsg">Start studying to begin your streak!</p>
+    </section>
+
+    <!-- ── MOTIVATIONAL QUOTES ── -->
+    <section class="card card-quotes" id="quotesCard">
+      <div class="card-header">
+        <h2>💡 Motivation</h2>
+      </div>
+      <div class="quote-display">
+        <p class="quote-text" id="quoteText">"The secret of getting ahead is getting started."</p>
+        <p class="quote-author" id="quoteAuthor">— Mark Twain</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="app-footer">
+    <p>StudyFlow &copy; 2026 — Built for focused students ✨</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
